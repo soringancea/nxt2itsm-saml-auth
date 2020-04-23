@@ -10,7 +10,7 @@ let propData = fs.readFileSync(path.join(utils.rootDir, 'properties.json'));
 
 // application variables
 exports.app = {
-    port: process.env.PORT || 3000,
+    port: process.env.PORT || 443,
     name: 'NXT2ITSM',
     scoreRefresh: process.env.SCORE_REFRESH || 60,
     deviceRefresh: process.env.DEVICE_REFRESH || 60,

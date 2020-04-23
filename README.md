@@ -141,11 +141,11 @@ If you added remote action to the documentation section of the scores, it is nec
 
 The certificates need to be put in place (or created if selfsigned) in the ssl/ folder. The files in this folder upon installation are simply examples.
 
-You can have 3 files in the ssl/ folder: 
+You need to have 3 files in the ssl/ folder: 
 
 - the certificate file
 - the associated key
-- the bundle of CA certificates (optional)
+- the bundle of CA certificates
 
 The CA bundle should have the different intermediate certificates so that the full certificate chain can be trusted.
 

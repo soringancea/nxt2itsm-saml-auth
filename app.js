@@ -78,7 +78,6 @@ const httpsServer = https.createServer(httpsOptions, app);
 //------------------- Routes import ---------------
 const deviceRoutes = require('./routes/device.js');
 const metadataRoute = require('./routes/metadata.js');
-const loginRoutes = require('./routes/login.js');
 
 //Handling routes
 app.use(metadataRoute);

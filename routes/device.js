@@ -7,10 +7,11 @@ const deviceController = require('../controllers/device.js');
 console.log('Registering devices routes...');
 
 ensureAuthenticated = (req, res, next) => {
-    if (!req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
         res.redirect('/login');
-    }
-    next();
+    };
 };
 
 router.get('/', ensureAuthenticated, deviceController.getIndex);

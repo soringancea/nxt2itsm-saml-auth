@@ -14,15 +14,13 @@ const express = require('express');
 const path = require('path');
 const https = require('https');
 const helmet = require('helmet');
+const flash = require('express-flash');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const flash = require('express-flash');
 const config = require('./config/config.js');
-
-//------------------- Passport config -------------
-require('./config/passport')(passport, config);
+const initPassport = require('./config/passport');
 
 //------------------- Express APP -----------------
 const app = express();
@@ -34,14 +32,17 @@ app.set('views', 'views');
 // Create static route to 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-    resave: true,
-    saveUninitialized: true,
+const mysession = {
+    resave: false,
+    saveUninitialized: false,
     secret: process.env.SESSION_SECRET
-}));
+};
 
-app.use(cookieParser());
+mysession.cookie.secure = true;
+
+app.use(session(mysession));
 app.use(flash());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(helmet());
@@ -53,6 +54,8 @@ app.use(helmet.contentSecurityPolicy({
 }));
 
 // Passport middleware
+initPassport(passport, config);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -79,8 +82,25 @@ const loginRoutes = require('./routes/login.js');
 
 //Handling routes
 app.use(metadataRoute);
-app.use(loginRoutes);
 app.use(deviceRoutes);
+
+// Authentication routes here
+app.get(
+    '/login',
+    passport.authenticate('saml', {
+        failureRedirect: '/login',
+        failureFlash: true
+    }), (req, res) => {
+        res.redirect('/');
+    });
+app.post('/login/callback',
+    passport.authenticate('saml', {
+        failureRedirect: '/login',
+        failureFlash: true
+    }), (req, res) => {
+        res.redirect('/');
+    });
+
 
 try {
     console.log("Listening on port:", config.app.port);

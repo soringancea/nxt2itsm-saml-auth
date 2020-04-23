@@ -1,6 +1,8 @@
 const samlStrategy = require('passport-saml').Strategy;
 const metadata = require('passport-saml-metadata');
 
+let inUsePassport;
+
 getProfile = (profile, done) => {
     profile = metadata.claimsToCamelCase(profile, reader.claimSchema);
     return done(null, profile);
@@ -16,7 +18,7 @@ initialize = (passport, config) => {
             strategyConfig.identifierFormat = null;
             strategyConfig.acceptedClockSkewMs = -1;
 
-            passport.use(new samlStrategy(strategyConfig, getProfile));
+            passport.use('saml', new samlStrategy(strategyConfig, getProfile));
 
             passport.serializeUser((user, done) => {
                 done(null, user);
@@ -25,6 +27,7 @@ initialize = (passport, config) => {
             passport.deserializeUser((user, done) => {
                 done(null, user);
             });
+
         })
         .catch((err) => {
             console.error('Error loading SAML metadata', err);

@@ -1,13 +1,6 @@
 const samlStrategy = require('passport-saml').Strategy;
 const metadata = require('passport-saml-metadata');
 
-let inUsePassport;
-
-getProfile = (profile, done) => {
-    profile = metadata.claimsToCamelCase(profile, reader.claimSchema);
-    return done(null, profile);
-}
-
 initialize = (passport, config) => {
     metadata.fetch(config.passport.saml.metadata)
         .then((reader) => {
@@ -18,7 +11,10 @@ initialize = (passport, config) => {
             strategyConfig.identifierFormat = null;
             strategyConfig.acceptedClockSkewMs = -1;
 
-            passport.use('saml', new samlStrategy(strategyConfig, getProfile));
+            passport.use('saml', new samlStrategy(strategyConfig, (profile, done) => {
+                profile = metadata.claimsToCamelCase(profile, reader.claimSchema);
+                return done(null, profile);
+            }));
 
             passport.serializeUser((user, done) => {
                 done(null, user);

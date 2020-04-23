@@ -10,6 +10,7 @@ The purpose of this package is to provide a connector between Nexthink engines a
 
 - [Requirements](#requirements)
 - [Usage](#usage)
+- [Identity Provider](#identity-provider)
 - [Installation](#installation)
     - [Online Installation](#online-installation)
     - [Offline Installation](#offline-installation)
@@ -44,6 +45,16 @@ Where device_name is a Windows PC name in Nexthink. This must be configured in t
 The pattern in red, yellow and green colors will be derived from a score.xml file that must be available in all Nexthink engines and must be placed in the scores/ folder.
 
 The score.xml may contain Nexthink Act links.
+
+# Identity Provider
+
+The application needs to be added as a relying party trust in the Identity Provider.
+
+To help with that, a specific path has been created to download the minimal metadata file from the application:
+
+`https://hostname/FederationMetadata/2007-06/FederationMetadata.xml` where __hostname__ is the FQDN of the application.
+
+The application stores the claim received as session information only.
 
 # Installation
 

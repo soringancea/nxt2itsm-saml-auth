@@ -15,16 +15,14 @@ const path = require('path');
 const https = require('https');
 const helmet = require('helmet');
 const session = require('express-session');
-const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-
+const flash = require('express-flash');
 const config = require('./config/config.js');
-const deviceRoutes = require('./routes/device.js');
-const loginRoutes = require('./routes/login.js');
-const metadataRoute = require('./routes/metadata.js');
-const initPassport = require('./config/passport');
+
+//------------------- Passport config -------------
+require('./config/passport')(passport, config);
 
 //------------------- Express APP -----------------
 const app = express();
@@ -54,8 +52,7 @@ app.use(helmet.contentSecurityPolicy({
     }
 }));
 
-initPassport(passport);
-
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -75,17 +72,15 @@ if (process.env.CA_BUNDLE) {
 
 const httpsServer = https.createServer(httpsOptions, app);
 
-ensureAuthenticated = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        res.redirect('/login');
-    }
-    next();
-}
+//------------------- Routes import ---------------
+const deviceRoutes = require('./routes/device.js');
+const metadataRoute = require('./routes/metadata.js');
+const loginRoutes = require('./routes/login.js');
 
 //Handling routes
 app.use(metadataRoute);
-app.use(loginRoutes(passport));
-app.use(ensureAuthenticated, deviceRoutes);
+app.use(loginRoutes);
+app.use(deviceRoutes);
 
 try {
     console.log("Listening on port:", config.app.port);

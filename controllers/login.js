@@ -1,19 +1,13 @@
-exports.getLogin = (passport) => {
-    return (req, res) => {
-        passport.authenticate('saml', {
-            failureRedirect: '/login',
-            failureFlash: true
-        });
-    };
-}
+exports.getLogin = (req, res) => {
+    passport.authenticate('saml', {
+        failureRedirect: '/login',
+    });
+};
 
-exports.postLogin = (passport) => {
-    return (req, res) => {
-        passport.authenticate('saml', {
-            failureRedirect: '/login',
-            failureFlash: true
-        });
-    };
+exports.postLogin = (req, res) => {
+    passport.authenticate('saml', {
+        failureRedirect: '/login',
+    });
 };
 
 exports.redirectHome = (req, res) => {

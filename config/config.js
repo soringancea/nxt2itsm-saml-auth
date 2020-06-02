@@ -58,7 +58,7 @@ exports.passport = {
             timeout: 1500,
             backupStore: fileCache({
                 basePath: os.tmpdir(),
-                ns: 'urn:nodejs:nxt2itsm-app'
+                ns: process.env.ISSUER || 'urn:nodejs:nxt2itsm-app'
             })
         }
     }

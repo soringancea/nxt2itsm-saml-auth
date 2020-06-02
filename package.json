@@ -1,5 +1,5 @@
 {
-    "name": "nxt2itsm-saml",
+    "name": "nxt2itsm-saml-auth",
     "version": "2.0.0",
     "description": "nxt2itsm with saml authentication",
     "main": "app.js",

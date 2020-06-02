@@ -46,7 +46,7 @@ exports.passport = {
     saml: {
         path: '/login/callback',
         // issuer string to supply to identity provider
-        issuer: 'urn:nodejs:nxt2itsm-app',
+        issuer: process.env.ISSUER || 'urn:nodejs:nxt2itsm-app',
         // This is the callback url used by the IDP (https://hostname/login/callback)
         callbackUrl: 'https://'.concat(process.env.HOSTNAME, '/login/callback'),
         metadata: {

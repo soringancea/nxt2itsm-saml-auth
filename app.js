@@ -88,18 +88,22 @@ app.use(deviceRoutes);
 app.get(
     '/login',
     passport.authenticate('saml', {
-        failureRedirect: '/login',
+        failureRedirect: '/unauthorized',
         failureFlash: true
     }), (req, res) => {
         res.redirect('/');
     });
 app.post('/login/callback',
     passport.authenticate('saml', {
-        failureRedirect: '/login',
+        failureRedirect: '/unauthorized',
         failureFlash: true
     }), (req, res) => {
         res.redirect('/');
     });
+app.get('/unauthorized', (req, res) => {
+    console.log('Unauthorized user');
+    res.send('User is not authorized to access the application');
+});
 
 
 try {

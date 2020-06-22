@@ -4,6 +4,7 @@ const axios = require('axios');
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
+const tunnel = require('tunnel');
 const utils = require('../utils/utils');
 
 let propData = fs.readFileSync(path.join(utils.rootDir, 'properties.json'));
@@ -39,6 +40,24 @@ exports.api = {
 // format is nxql_field: ['Display name', 'nxql_type']
 exports.properties = JSON.parse(propData);
 
+// Check if proxy needed for SAML assertion requests or not
+if (process.env.PROXY == 'true' || process.env.PROXY == 'True' || process.env.PROXY == 'TRUE') {
+    console.log('Proxy for SAML:', process.env.PROXY);
+    var agent = tunnel.httpsOverHttp({
+        proxy: {
+            host: process.env.PROXY_HOST,
+            port: process.env.PROXY_PORT
+        },
+        ca: this.ssl.caContent,
+        key: this.ssl.keyContent,
+        cert: this.ssl.certContent
+    });
+} else {
+    var agent = new https.Agent({ ca: this.ssl.caContent });
+}
+
+var axiosAgent = axios.create({ httpsAgent: agent });
+
 //Strategy configuration for authentication
 exports.passport = {
     protocol: 'saml2',
@@ -50,9 +69,7 @@ exports.passport = {
         // This is the callback url used by the IDP (https://hostname/login/callback)
         callbackUrl: 'https://'.concat(process.env.HOSTNAME, '/login/callback'),
         metadata: {
-            client: axios.create({
-                httpsAgent: new https.Agent({ ca: this.ssl.caContent })
-            }),
+            client: axiosAgent,
             // IDP Metadata url
             url: 'https://'.concat(process.env.IDP_HOSTNAME, process.env.META_URL),
             timeout: 1500,
